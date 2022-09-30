@@ -26,7 +26,7 @@ module "aci_maintenance_group" {
 
 module "aci_vpc_group" {
   source  = "netascode/vpc-group/aci"
-  version = ">= 0.1.1"
+  version = ">= 0.2.0"
 
   count = lookup(local.modules, "aci_vpc_group", true) == false ? 0 : 1
   mode  = lookup(lookup(local.node_policies, "vpc_groups", {}), "mode", local.defaults.apic.node_policies.vpc_groups.mode)
