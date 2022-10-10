@@ -1,4 +1,4 @@
-## 0.2.1 (unreleased)
+## 0.2.1
 
 - Fix unintended deletion of inband EPG when inband node address is removed
 - Fix unintended deletion of out-of-band EPG when out-of-band node address is removed
