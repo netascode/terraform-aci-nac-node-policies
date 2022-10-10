@@ -1,3 +1,8 @@
+## 0.2.1 (unreleased)
+
+- Fix unintended deletion of inband EPG when inband node address is removed
+- Fix unintended deletion of out-of-band EPG when out-of-band node address is removed
+
 ## 0.2.0
 
 - Use Terraform 1.3 compatible modules
