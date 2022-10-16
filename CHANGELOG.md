@@ -1,3 +1,7 @@
+## 0.3.0 (unreleased)
+
+- Pin module dependencies
+
 ## 0.2.1
 
 - Fix unintended deletion of inband EPG when inband node address is removed
