@@ -51,11 +51,11 @@ module "aci_node_registration" {
   type          = lookup(each.value, "type", "unspecified")
 }
 
-module "aci_inb_node_address" {
+module "aci_inband_node_address" {
   source  = "netascode/inband-node-address/aci"
   version = "0.1.2"
 
-  for_each       = { for node in lookup(local.node_policies, "nodes", []) : node.id => node if(lookup(node, "inb_address", null) != null || lookup(node, "inb_v6_address", null) != null) && lookup(local.modules, "aci_inb_node_address", true) }
+  for_each       = { for node in lookup(local.node_policies, "nodes", []) : node.id => node if(lookup(node, "inb_address", null) != null || lookup(node, "inb_v6_address", null) != null) && lookup(local.modules, "aci_inband_node_address", true) }
   node_id        = each.value.id
   pod_id         = lookup(each.value, "pod", local.defaults.apic.node_policies.nodes.pod)
   ip             = lookup(each.value, "inb_address", "")
