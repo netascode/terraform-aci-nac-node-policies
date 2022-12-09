@@ -1,3 +1,7 @@
+## 0.3.2 (unreleased)
+
+- Add option to configure individual vPC group name
+
 ## 0.3.1
 
 - Harmonize module flags
