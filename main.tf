@@ -1,9 +1,20 @@
 locals {
-  defaults        = try(var.model.defaults, {})
+  user_defaults   = { "defaults" : try(var.model.defaults, {}) }
+  defaults        = lookup(yamldecode(data.utils_yaml_merge.defaults.output), "defaults")
   modules         = try(var.model.modules, {})
   apic            = try(var.model.apic, {})
   access_policies = try(local.apic.access_policies, {})
   node_policies   = try(local.apic.node_policies, {})
+}
+
+data "utils_yaml_merge" "defaults" {
+  input = [file("${path.module}/defaults/defaults.yaml"), yamlencode(local.user_defaults)]
+}
+
+resource "null_resource" "dependencies" {
+  triggers = {
+    dependencies = join(",", var.dependencies)
+  }
 }
 
 module "aci_firmware_group" {
@@ -13,6 +24,10 @@ module "aci_firmware_group" {
   for_each = { for np in try(local.node_policies.update_groups, {}) : np.name => np if try(local.modules.aci_firmware_group, true) }
   name     = "${each.value.name}${local.defaults.apic.node_policies.update_groups.name_suffix}"
   node_ids = [for node in try(local.node_policies.nodes, []) : node.id if try(node.update_group, "") == each.value.name]
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
 }
 
 module "aci_maintenance_group" {
@@ -22,6 +37,10 @@ module "aci_maintenance_group" {
   for_each = { for np in try(local.node_policies.update_groups, {}) : np.name => np if try(local.modules.aci_maintenance_group, true) }
   name     = "${each.value.name}${local.defaults.apic.node_policies.update_groups.name_suffix}"
   node_ids = [for node in try(local.node_policies.nodes, []) : node.id if try(node.update_group, "") == each.value.name]
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
 }
 
 module "aci_vpc_group" {
@@ -37,6 +56,10 @@ module "aci_vpc_group" {
     switch_1 = group.switch_1
     switch_2 = group.switch_2
   }]
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
 }
 
 module "aci_node_registration" {
@@ -49,6 +72,10 @@ module "aci_node_registration" {
   pod_id        = try(each.value.pod, local.defaults.apic.node_policies.nodes.pod)
   serial_number = each.value.serial_number
   type          = try(each.value.type, "unspecified")
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
 }
 
 module "aci_inband_node_address" {
@@ -63,6 +90,10 @@ module "aci_inband_node_address" {
   v6_ip          = try(each.value.inb_v6_address, "")
   v6_gateway     = try(each.value.inb_v6_gateway, "")
   endpoint_group = try(local.node_policies.inb_endpoint_group, local.defaults.apic.node_policies.inb_endpoint_group)
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
 }
 
 module "aci_oob_node_address" {
@@ -77,4 +108,13 @@ module "aci_oob_node_address" {
   v6_ip          = try(each.value.oob_v6_address, "")
   v6_gateway     = try(each.value.oob_v6_gateway, "")
   endpoint_group = try(local.node_policies.oob_endpoint_group, local.defaults.apic.node_policies.oob_endpoint_group)
+
+  depends_on = [
+    null_resource.dependencies,
+  ]
+}
+
+resource "null_resource" "critical_resources_done" {
+  triggers = {
+  }
 }
