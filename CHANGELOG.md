@@ -1,3 +1,7 @@
+## 0.4.1 (unreleased)
+
+- Allow pod ID 0 for standalone APICs
+
 ## 0.4.0
 
 - Include default values in module

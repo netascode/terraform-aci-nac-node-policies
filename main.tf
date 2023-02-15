@@ -80,7 +80,7 @@ module "aci_node_registration" {
 
 module "aci_inband_node_address" {
   source  = "netascode/inband-node-address/aci"
-  version = "0.1.2"
+  version = "0.1.3"
 
   for_each       = { for node in try(local.node_policies.nodes, []) : node.id => node if(try(node.inb_address, null) != null || try(node.inb_v6_address, null) != null) && try(local.modules.aci_inband_node_address, true) }
   node_id        = each.value.id
@@ -98,7 +98,7 @@ module "aci_inband_node_address" {
 
 module "aci_oob_node_address" {
   source  = "netascode/oob-node-address/aci"
-  version = "0.1.2"
+  version = "0.1.3"
 
   for_each       = { for node in try(local.node_policies.nodes, []) : node.id => node if(try(node.oob_address, null) != null || try(node.oob_v6_address, null) != null) && try(local.modules.aci_oob_node_address, true) }
   node_id        = each.value.id
